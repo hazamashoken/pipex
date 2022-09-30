@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 01:04:44 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 01:36:15 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,9 +292,10 @@ void	child(t_ppxb p, char **argv, char **envp)
 		{
 			msg_pipe(p.cmd_args[0]);
 			child_free(&p);
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		execve(p.cmd, p.cmd_args, envp);
+		child_free(&p);
 	}
 }
 
