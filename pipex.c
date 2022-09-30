@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 23:22:08 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 23:37:02 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,10 @@ int	main(int argc, char **argv, char **envp)
 		return (err_msg("Invalid number of arguments.\n"));
 	pipex.infile = open(argv[1], O_RDONLY);
 	if (pipex.infile < 0)
-		return (perr_msg("Infile"));
+		return (perr_msg(argv[1]));
 	pipex.outfile = open(argv[argc - 1], O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	if (pipex.outfile < 0)
-		return (perr_msg("Outfile"));
+		return (perr_msg(argv[argc - 1]));
 	if (pipe(pipex.tube) < 0)
 		return (perr_msg("Pipe"));
 	pipex.paths = find_path(envp);
