@@ -6,7 +6,7 @@
 #    By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/14 00:32:16 by tliangso          #+#    #+#              #
-#    Updated: 2022/09/28 15:47:28 by tliangso         ###   ########.fr        #
+#    Updated: 2022/09/30 18:01:11 by tliangso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,4 +63,8 @@ fclean:		clean
 
 re:			fclean	all
 
-.PHONY:		all	clean	fclean	re
+b:	bonus clean
+
+m: make clean
+
+.PHONY:		all	clean	fclean	re bonus b m

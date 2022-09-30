@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/29 02:38:30 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 18:00:02 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,19 @@ void	close_pipes(t_ppxb *pipex)
 	}
 }
 
+void free_split(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+}
+
 static char	*get_cmd(char **paths, char *cmd)
 {
 	char	*tmp;
@@ -198,6 +211,66 @@ static void	sub_dup2(int zero, int first)
 	dup2(first, 1);
 }
 
+char	**make_new_args(char **args, int index)
+{
+	char	**tmp;
+	int		len;
+	char	**new_args;
+	int		i;
+	int		j;
+
+	tmp = args;
+	len = 0;
+	j = 0;
+	i = 0;
+	while (tmp[len] != 0)
+		len++;
+	new_args = (char **)malloc(sizeof(char *) * len);
+	if (new_args == NULL)
+		return (NULL);
+	while (args[j] != 0)
+	{
+		if (i == index)
+		{
+			new_args[i] = ft_strdup("\' \'");
+			j++;
+		}
+		else
+			new_args[i] = ft_strdup(args[j]);
+		dprintf(2, "%d: %s\n", i, new_args[i]);
+		i++;
+		j++;
+	}
+	free_split(args);
+	i = 0;
+	return (new_args);
+}
+
+char	**ft_cmd_sanitiser(char **cmd_args)
+{
+	char	**tmp;
+	char	last;
+	int		index;
+	int		i;
+
+	tmp = cmd_args;
+	last = '\0';
+	index = 0;
+	i = 0;
+	while (tmp[i] != 0)
+	{
+		if (ft_strlen(tmp[i]) == 1 && *tmp[i] == '\'')
+		{
+			if (last == *tmp[i])
+				return (ft_cmd_sanitiser(make_new_args(cmd_args, index)));
+			index++;
+			last = *tmp[i];
+		}
+		i++;
+	}
+	return (cmd_args);
+}
+
 void	child(t_ppxb p, char **argv, char **envp)
 {
 	p.pid = fork();
@@ -211,6 +284,13 @@ void	child(t_ppxb p, char **argv, char **envp)
 			sub_dup2(p.pipe[2 * p.idx - 2], p.pipe[2 * p.idx + 1]);
 		close_pipes(&p);
 		p.cmd_args = ft_split(argv[2 + p.here_doc + p.idx], ' ');
+		p.cmd_args = ft_cmd_sanitiser(p.cmd_args);
+		// if (p.cmd_args[0])
+		// 	dprintf(2, "%s\n", p.cmd_args[0]);
+		// if (p.cmd_args[1])
+		// 	dprintf(2, "%s\n", p.cmd_args[1]);
+		// if (p.cmd_args[2])
+		// 	dprintf(2, "%s\n", p.cmd_args[2]);
 		p.cmd = get_cmd(p.cmd_paths, p.cmd_args[0]);
 		if (!p.cmd)
 		{
