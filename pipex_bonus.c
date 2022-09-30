@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 18:00:02 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 18:22:00 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	here_doc(char *argv, t_ppxb *pipex)
 
 	file = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0000644);
 	if (file < 0)
-		perr_msg("heredoc:");
+		perr_msg("heredoc");
 	while (1)
 	{
 		write(1, "heredoc> ", 9);
@@ -75,7 +75,7 @@ void	get_infile(char **argv, t_ppxb *pipex)
 	{
 		pipex->infile = open(argv[1], O_RDONLY);
 		if (pipex->infile < 0)
-			perr_msg("Infile: ");
+			perr_msg("Infile");
 	}
 }
 
@@ -86,7 +86,7 @@ void	get_outfile(char *argv, t_ppxb *pipex)
 	else
 		pipex->outfile = open(argv, O_CREAT | O_RDWR | O_TRUNC, 0000644);
 	if (pipex->outfile < 0)
-		perr_msg("Outfile: ");
+		perr_msg("Outfile");
 }
 
 char	*find_path(char **envp)
@@ -138,7 +138,7 @@ void	pipe_free(t_ppxb *pipex)
 	if (pipex->here_doc)
 		unlink(".heredoc_tmp");
 	free(pipex->pipe);
-	err_msg("Envp: ");
+	err_msg("Environment");
 	exit(1);
 }
 
@@ -157,7 +157,7 @@ void	creat_pipes(t_ppxb *pipex)
 
 void	msg_pipe(char *arg)
 {
-	write(2, "Command not found: ", ft_strlen("Command not found: "));
+	write(2, "Command not found\n", ft_strlen("Command not found\n"));
 	write(2, arg, ft_strlen(arg));
 	write(2, "\n", 1);
 }
@@ -285,12 +285,6 @@ void	child(t_ppxb p, char **argv, char **envp)
 		close_pipes(&p);
 		p.cmd_args = ft_split(argv[2 + p.here_doc + p.idx], ' ');
 		p.cmd_args = ft_cmd_sanitiser(p.cmd_args);
-		// if (p.cmd_args[0])
-		// 	dprintf(2, "%s\n", p.cmd_args[0]);
-		// if (p.cmd_args[1])
-		// 	dprintf(2, "%s\n", p.cmd_args[1]);
-		// if (p.cmd_args[2])
-		// 	dprintf(2, "%s\n", p.cmd_args[2]);
 		p.cmd = get_cmd(p.cmd_paths, p.cmd_args[0]);
 		if (!p.cmd)
 		{
@@ -307,14 +301,14 @@ int	main(int argc, char **argv, char **envp)
 	t_ppxb	pipex;
 
 	if (argc < args_in(argv[1], &pipex))
-		return (err_msg("Invalid Arguments!\n"));
+		return (err_msg("Invalid number of arguments.\n"));
 	get_infile(argv, &pipex);
 	get_outfile(argv[argc - 1], &pipex);
 	pipex.cmd_nmbs = argc - 3 - pipex.here_doc;
 	pipex.pipe_nmbs = 2 * (pipex.cmd_nmbs - 1);
 	pipex.pipe = (int *)malloc(sizeof(int) * pipex.pipe_nmbs);
 	if (!pipex.pipe)
-		perr_msg("Pipe: ");
+		perr_msg("Pipe");
 	pipex.env_path = find_path(envp);
 	pipex.cmd_paths = ft_split(pipex.env_path, ':');
 	if (!pipex.cmd_paths)

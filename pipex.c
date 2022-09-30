@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/28 17:02:49 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 18:24:49 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,15 +124,15 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 
 	if (argc != 5)
-		return (err_msg("Invalid Arguments!\n"));
+		return (err_msg("Invalid number of arguments.\n"));
 	pipex.infile = open(argv[1], O_RDONLY);
 	if (pipex.infile < 0)
-		return (perr_msg("Infile: "));
+		return (perr_msg("Infile"));
 	pipex.outfile = open(argv[argc - 1], O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	if (pipex.outfile < 0)
-		return (perr_msg("Outfile: "));
+		return (perr_msg("Outfile"));
 	if (pipe(pipex.tube) < 0)
-		return (perr_msg("Pipe: "));
+		return (perr_msg("Pipe"));
 	pipex.paths = find_path(envp);
 	pipex.cmd_paths = ft_split(pipex.paths, ':');
 	pipex.pid1 = fork();
