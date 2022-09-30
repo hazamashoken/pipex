@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 18:22:00 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 23:22:31 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	err_msg(char *str)
 {
 	write(2, str, ft_strlen(str));
-	return (1);
+	exit (1);
 }
 
 int	perr_msg(char *str)
 {
 	perror(str);
-	return (1);
+	exit (1);
 }
 
 int	args_in(char *arg, t_ppxb *pipex)

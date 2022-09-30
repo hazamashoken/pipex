@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 18:24:49 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/09/30 23:22:08 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	err_msg(char *str)
 {
 	write(2, str, ft_strlen(str));
-	return (1);
+	exit (1);
 }
 
 int	perr_msg(char *str)
 {
 	perror(str);
-	return (1);
+	exit (1);
 }
 
 char	*find_path(char **envp)
@@ -91,7 +91,7 @@ void	first_child(t_pipex pipex, char **argv, char **envp)
 	if (!pipex.cmd)
 	{
 		free_child(&pipex);
-		err_msg("Command not found!\n");
+		err_msg("Command not found\n");
 		exit(1);
 	}
 	execve(pipex.cmd, pipex.cmd_args, envp);
