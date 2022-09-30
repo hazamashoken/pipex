@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:22:06 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/28 14:24:51 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 00:21:14 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 
 //exit
 # include	<stdlib.h>
+
+//errno
+# include	<errno.h>
 
 typedef struct s_pipex
 {

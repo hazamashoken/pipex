@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 23:37:02 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 00:21:54 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 int	err_msg(char *str)
 {
 	write(2, str, ft_strlen(str));
-	exit (1);
+	exit(EXIT_FAILURE);
 }
 
 int	perr_msg(char *str)
 {
-	perror(str);
-	exit (1);
+	if (errno == 0)
+		write(2, "Error\n", 6);
+	else
+		perror(str);
+	exit(EXIT_FAILURE);
 }
 
 char	*find_path(char **envp)

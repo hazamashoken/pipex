@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:51:38 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 17:03:59 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 00:21:23 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 
 //exit
 # include	<stdlib.h>
+
+//errno
+# include	<errno.h>
 
 # include	"get_next_line.h"
 
