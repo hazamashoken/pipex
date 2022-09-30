@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 03:07:17 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 03:29:29 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,18 +78,18 @@ void	get_infile(char **argv, t_ppxb *pipex)
 	{
 		pipex->infile = open(argv[1], O_RDONLY);
 		if (pipex->infile < 0)
-			perr_msg("Infile");
+			perr_msg(argv[1]);
 	}
 }
 
-void	get_outfile(char *argv, t_ppxb *pipex)
+void	get_outfile(char **argv, t_ppxb *pipex, int argc)
 {
 	if (pipex->here_doc)
-		pipex->outfile = open(argv, O_WRONLY | O_CREAT | O_APPEND, 0000644);
+		pipex->outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0000644);
 	else
-		pipex->outfile = open(argv, O_CREAT | O_RDWR | O_TRUNC, 0000644);
+		pipex->outfile = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0000644);
 	if (pipex->outfile < 0)
-		perr_msg("Outfile");
+		perr_msg(argv[argc - 1]);
 }
 
 char	*find_path(char **envp)
@@ -275,7 +275,7 @@ char	**ft_cmd_sanitiser(char **cmd_args)
 	return (cmd_args);
 }
 
-void	child(t_ppxb p, char **argv, char **envp)
+void	child(t_ppxb p, char **argv, char **envp, int argc)
 {
 	pid_t	pid;
 
@@ -285,9 +285,15 @@ void	child(t_ppxb p, char **argv, char **envp)
 	else if (pid == 0)
 	{
 		if (p.idx == 0)
+		{
+			get_infile(argv, &p);
 			sub_dup2(p.infile, p.pipe[1]);
+		}
 		else if (p.idx == p.cmd_nmbs - 1)
+		{
+			get_outfile(argv, &p, argc);
 			sub_dup2(p.pipe[2 * p.idx - 2], p.outfile);
+		}
 		else
 			sub_dup2(p.pipe[2 * p.idx - 2], p.pipe[2 * p.idx + 1]);
 		close_pipes(&p);
@@ -312,8 +318,6 @@ int	main(int argc, char **argv, char **envp)
 	errno = 0;
 	if (argc < args_in(argv[1], &pipex))
 		return (err_msg("Invalid number of arguments.\n"));
-	get_infile(argv, &pipex);
-	get_outfile(argv[argc - 1], &pipex);
 	pipex.cmd_nmbs = argc - 3 - pipex.here_doc;
 	pipex.pipe_nmbs = 2 * (pipex.cmd_nmbs - 1);
 	pipex.pipe = (int *)malloc(sizeof(int) * pipex.pipe_nmbs);
@@ -326,7 +330,7 @@ int	main(int argc, char **argv, char **envp)
 	creat_pipes(&pipex);
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)
-		child(pipex, argv, envp);
+		child(pipex, argv, envp, argc);
 	close_pipes(&pipex);
 	wait(NULL);
 	wait(NULL);
