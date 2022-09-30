@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 03:29:29 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 04:01:19 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	here_doc(char *argv, t_ppxb *pipex)
 		if (ft_strncmp(argv, buf, ft_strlen(argv)) == 0)
 			break ;
 		write(file, buf, ft_strlen(buf));
-		write(file, "\n", 1);
+		//write(file, "\n", 1);
 		free(buf);
 	}
 	free(buf);
@@ -82,13 +82,13 @@ void	get_infile(char **argv, t_ppxb *pipex)
 	}
 }
 
-void	get_outfile(char **argv, t_ppxb *pipex, int argc)
+void	get_outfile(char **argv, t_ppxb *p, int argc)
 {
-	if (pipex->here_doc)
-		pipex->outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0000644);
+	if (p->here_doc)
+		p->outfile = open(argv[argc - 1], 01 | O_CREAT | O_APPEND, 0000644);
 	else
-		pipex->outfile = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0000644);
-	if (pipex->outfile < 0)
+		p->outfile = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0000644);
+	if (p->outfile < 0)
 		perr_msg(argv[argc - 1]);
 }
 
