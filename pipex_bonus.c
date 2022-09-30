@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 01:36:15 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 02:34:23 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 int	err_msg(char *str)
 {
 	write(2, str, ft_strlen(str));
-	exit (1);
+	exit (EXIT_FAILURE);
 }
 
 int	perr_msg(char *str)
 {
-	perror(str);
-	exit (1);
+	if (errno == 0)
+		write(2, "Error\n", 6);
+	else
+		perror(str);
+	exit(EXIT_FAILURE);
 }
 
 int	args_in(char *arg, t_ppxb *pipex)
@@ -239,7 +242,7 @@ char	**make_new_args(char **args, int index)
 		}
 		else
 			new_args[i] = ft_strdup(args[j]);
-		dprintf(2, "%d: %s\n", i, new_args[i]);
+		//dprintf(2, "%d: %s\n", i, new_args[i]);
 		i++;
 		j++;
 	}
@@ -275,8 +278,12 @@ char	**ft_cmd_sanitiser(char **cmd_args)
 
 void	child(t_ppxb p, char **argv, char **envp)
 {
-	p.pid = fork();
-	if (!p.pid)
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		perr_msg("fork");
+	if (pid == 0)
 	{
 		if (p.idx == 0)
 			sub_dup2(p.infile, p.pipe[1]);
@@ -303,6 +310,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_ppxb	pipex;
 
+	errno = 0;
 	if (argc < args_in(argv[1], &pipex))
 		return (err_msg("Invalid number of arguments.\n"));
 	get_infile(argv, &pipex);
@@ -321,7 +329,8 @@ int	main(int argc, char **argv, char **envp)
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		child(pipex, argv, envp);
 	close_pipes(&pipex);
-	waitpid(-1, NULL, 0);
+	while (pipex.idx >= 0)
+		waitpid(-1, NULL, 0);
 	parent_free(&pipex);
 	return (0);
 }
