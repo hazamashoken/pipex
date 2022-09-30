@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 02:34:23 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 02:44:19 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,6 @@ char	**make_new_args(char **args, int index)
 		}
 		else
 			new_args[i] = ft_strdup(args[j]);
-		//dprintf(2, "%d: %s\n", i, new_args[i]);
 		i++;
 		j++;
 	}
@@ -283,7 +282,7 @@ void	child(t_ppxb p, char **argv, char **envp)
 	pid = fork();
 	if (pid < 0)
 		perr_msg("fork");
-	if (pid == 0)
+	else if (pid == 0)
 	{
 		if (p.idx == 0)
 			sub_dup2(p.infile, p.pipe[1]);
@@ -329,8 +328,7 @@ int	main(int argc, char **argv, char **envp)
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		child(pipex, argv, envp);
 	close_pipes(&pipex);
-	while (pipex.idx >= 0)
-		waitpid(-1, NULL, 0);
+	waitpid(-1, NULL, 0);
 	parent_free(&pipex);
 	return (0);
 }
