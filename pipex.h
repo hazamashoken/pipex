@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:22:06 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 00:21:14 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 00:43:40 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@
 
 typedef struct s_pipex
 {
-	pid_t	pid1;
-	pid_t	pid2;
 	int		tube[2];
 	int		infile;
 	int		outfile;
