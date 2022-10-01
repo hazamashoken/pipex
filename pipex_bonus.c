@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:00:35 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 13:09:07 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,7 @@ void	child(t_ppxb p, char **argv, char **envp, int argc)
 		}
 		execve(p.cmd, p.cmd_args, envp);
 		child_free(&p);
-		waitpid(pid, &stat, 0);
+		//waitpid(pid, &stat, 0);
 	}
 }
 
@@ -320,14 +320,14 @@ int	main(int argc, char **argv, char **envp)
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		child(pipex, argv, envp, argc);
 	close_pipes(&pipex);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
 	parent_free(&pipex);
 	return (0);
 }
