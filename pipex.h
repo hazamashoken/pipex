@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:22:06 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:26:06 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 15:42:24 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,21 @@ typedef struct s_pipex
 
 }	t_pipex;
 
+typedef struct s_runner
+{
+	int	i;
+	int	j;
+	int	len;
+}	t_runner;
+
 //utils.c
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlen(const char *s);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strdup(const char *s);
+char	*ft_strdup(char *s);
 void	ft_putstr_fd(char *s, int fd);
+size_t	ft_strpplen(char **s);
 void	ft_free_split(char **str);
 
 #endif

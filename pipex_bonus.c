@@ -6,11 +6,12 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:20:59 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 15:41:53 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"pipex_bonus.h"
+#include "pipex.h"
 
 int	err_msg(char *str)
 {
@@ -205,35 +206,29 @@ static void	sub_dup2(int zero, int first)
 
 char	**make_new_args(char **args, int index)
 {
-	char	**tmp;
-	int		len;
-	char	**new_args;
-	int		i;
-	int		j;
+	t_brunner	runner;
+	char		**new_args;
+	char		*str;
 
-	tmp = args;
-	len = 0;
-	j = 0;
-	i = 0;
-	while (tmp[len] != 0)
-		len++;
-	new_args = (char **)malloc(sizeof(char *) * len);
+	runner.i = 0;
+	runner.j = 0;
+	runner.len = ft_strpplen(args);
+	new_args = (char **)malloc(sizeof(char *) * runner.len);
 	if (new_args == NULL)
 		return (NULL);
-	while (args[j] != 0)
+	while (args[runner.j] != 0)
 	{
-		if (i == index)
+		if (runner.i == index)
 		{
-			new_args[i] = ft_strdup("\' \'");
-			j++;
+			str = ft_strdup("\' \'");
+			runner.j += 2;
 		}
 		else
-			new_args[i] = ft_strdup(args[j]);
-		i++;
-		j++;
+			str = ft_strdup(args[runner.j++]);
+		new_args[runner.i] = str;
+		runner.i++;
 	}
 	ft_free_split(args);
-	i = 0;
 	return (new_args);
 }
 
@@ -290,6 +285,24 @@ void	child(t_ppxb p, char **argv, char **envp, int argc)
 	child_free(&p);
 }
 
+void	cmd_counter(int argc, t_ppxb *pipex)
+{
+	pipex->cmd_nmbs = argc - 3 - pipex->here_doc;
+	pipex->pid = (int *)malloc(sizeof(int) * pipex->cmd_nmbs);
+	pipex->pipe_nmbs = 2 * (pipex->cmd_nmbs - 1);
+	pipex->pipe = (int *)malloc(sizeof(int) * pipex->pipe_nmbs);
+	if (!pipex->pipe)
+		perr_msg("Pipe");
+}
+
+void	path_finder(t_ppxb *pipex, char **envp)
+{
+	pipex->env_path = find_path(envp);
+	pipex->cmd_paths = ft_split(pipex->env_path, ':');
+	if (!pipex->cmd_paths)
+		pipe_free(pipex);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_ppxb	pipex;
@@ -297,16 +310,8 @@ int	main(int argc, char **argv, char **envp)
 	errno = 0;
 	if (argc < args_in(argv[1], &pipex))
 		return (err_msg("Invalid number of arguments.\n"));
-	pipex.cmd_nmbs = argc - 3 - pipex.here_doc;
-	pipex.pid = (int *)malloc(sizeof(int) * pipex.cmd_nmbs);
-	pipex.pipe_nmbs = 2 * (pipex.cmd_nmbs - 1);
-	pipex.pipe = (int *)malloc(sizeof(int) * pipex.pipe_nmbs);
-	if (!pipex.pipe)
-		perr_msg("Pipe");
-	pipex.env_path = find_path(envp);
-	pipex.cmd_paths = ft_split(pipex.env_path, ':');
-	if (!pipex.cmd_paths)
-		pipe_free(&pipex);
+	cmd_counter(argc, &pipex);
+	path_finder(&pipex, envp);
 	creat_pipes(&pipex);
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)

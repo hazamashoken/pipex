@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:26:32 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 15:42:04 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,35 +59,29 @@ char	*get_cmd(char **paths, char *cmd)
 
 char	**make_new_args(char **args, int index)
 {
-	char	**tmp;
-	int		len;
-	char	**new_args;
-	int		i;
-	int		j;
+	t_runner	runner;
+	char		**new_args;
+	char		*str;
 
-	tmp = args;
-	len = 0;
-	j = 0;
-	i = 0;
-	while (tmp[len] != 0)
-		len++;
-	new_args = (char **)malloc(sizeof(char *) * len);
+	runner.i = 0;
+	runner.j = 0;
+	runner.len = ft_strpplen(args);
+	new_args = (char **)malloc(sizeof(char *) * runner.len);
 	if (new_args == NULL)
 		return (NULL);
-	while (args[j] != 0)
+	while (args[runner.j] != 0)
 	{
-		if (i == index)
+		if (runner.i == index)
 		{
-			new_args[i] = ft_strdup("\' \'");
-			j++;
+			str = ft_strdup("\' \'");
+			runner.j += 2;
 		}
 		else
-			new_args[i] = ft_strdup(args[j]);
-		i++;
-		j++;
+			str = ft_strdup(args[runner.j++]);
+		new_args[runner.i] = str;
+		runner.i++;
 	}
 	ft_free_split(args);
-	i = 0;
 	return (new_args);
 }
 

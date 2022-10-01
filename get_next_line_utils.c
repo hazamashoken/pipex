@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/19 20:32:25 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/28 14:21:17 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 15:42:43 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ char	*ft_strchr(const char *s, int c)
 	}
 	return ((char *)s);
 }
-
 
 // char	*ft_strjoin(char const *s1, char const *s2)
 // {

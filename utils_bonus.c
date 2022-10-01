@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:35:48 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 16:04:33 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 16:04:21 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include	"pipex.h"
-#include <stdio.h>
+#include	"pipex_bonus.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
