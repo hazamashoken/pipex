@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 15:42:04 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 16:27:45 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void	close_pipes(t_pipex *pipex)
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
+	int		stat;
 
 	errno = 0;
 	if (argc != 5)
@@ -208,8 +209,8 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.pid_out == 0)
 		second_child(pipex, argv, envp);
 	close_pipes(&pipex);
-	waitpid(pipex.pid_in, NULL, 0);
-	waitpid(pipex.pid_out, NULL, 0);
+	waitpid(pipex.pid_in, &stat, 0);
+	waitpid(pipex.pid_out, &stat, 0);
 	free_parent(&pipex);
-	return (0);
+	exit (stat);
 }
