@@ -6,13 +6,11 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 17:45:11 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 18:30:00 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"pipex_bonus.h"
-#include "pipex.h"
-#include <bits/types/stack_t.h>
 
 int	err_msg(char *str)
 {
