@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:18:33 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 13:20:59 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,14 +321,6 @@ int	main(int argc, char **argv, char **envp)
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		waitpid(pipex.pid[pipex.idx], NULL, 0);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
-	// wait(NULL);
 	parent_free(&pipex);
 	return (0);
 }
