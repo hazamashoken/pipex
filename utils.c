@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:35:48 by tliangso          #+#    #+#             */
-/*   Updated: 2022/09/30 17:03:52 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 11:10:46 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,17 @@ char	*ft_strdup(const char *s)
 	}
 	*(str + i) = '\0';
 	return (str);
+}
+
+void ft_free_split(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
