@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 20:22:06 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 00:43:40 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 11:46:11 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlen(const char *s);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
-
+char	*ft_strdup(const char *s);
 void	ft_putstr_fd(char *s, int fd);
+void	ft_free_split(char **str);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 04:01:19 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 13:00:35 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	here_doc(char *argv, t_ppxb *pipex)
 		if (ft_strncmp(argv, buf, ft_strlen(argv)) == 0)
 			break ;
 		write(file, buf, ft_strlen(buf));
-		//write(file, "\n", 1);
 		free(buf);
 	}
 	free(buf);
@@ -177,19 +176,6 @@ void	close_pipes(t_ppxb *pipex)
 	}
 }
 
-void free_split(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
-
 static char	*get_cmd(char **paths, char *cmd)
 {
 	char	*tmp;
@@ -245,7 +231,7 @@ char	**make_new_args(char **args, int index)
 		i++;
 		j++;
 	}
-	free_split(args);
+	ft_free_split(args);
 	i = 0;
 	return (new_args);
 }
@@ -278,6 +264,7 @@ char	**ft_cmd_sanitiser(char **cmd_args)
 void	child(t_ppxb p, char **argv, char **envp, int argc)
 {
 	pid_t	pid;
+	int		stat;
 
 	pid = fork();
 	if (pid < 0)
@@ -308,6 +295,7 @@ void	child(t_ppxb p, char **argv, char **envp, int argc)
 		}
 		execve(p.cmd, p.cmd_args, envp);
 		child_free(&p);
+		waitpid(pid, &stat, 0);
 	}
 }
 
@@ -332,14 +320,14 @@ int	main(int argc, char **argv, char **envp)
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		child(pipex, argv, envp, argc);
 	close_pipes(&pipex);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
 	parent_free(&pipex);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:51:38 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 02:31:05 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 11:50:14 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 
 typedef struct s_ppxb
 {
+	pid_t	*pid;
 	int		infile;
 	int		outfile;
 	char	*env_path;
@@ -54,5 +55,6 @@ size_t	ft_strlen(const char *s);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strdup(const char *s);
+void	ft_free_split(char **str);
 
 #endif
