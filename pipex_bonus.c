@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 20:34:13 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 20:50:46 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	here_doc(char *argv, t_ppxb *pipex)
 	{
 		write(1, "heredoc> ", 9);
 		buf = get_next_line(0);
-		dprintf(2, "argv:%s buf:%s\n", argv, buf);
 		if (ft_strncmp(argv, buf, ft_strlen(argv)) == 0)
 			break ;
 		write(file, buf, ft_strlen(buf));
