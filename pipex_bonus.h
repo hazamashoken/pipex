@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:51:38 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 15:41:44 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 19:28:58 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 typedef struct s_ppxb
 {
 	pid_t	*pid;
+	int		status;
 	int		infile;
 	int		outfile;
 	char	*env_path;

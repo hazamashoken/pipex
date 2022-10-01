@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 18:30:00 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 19:30:16 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,9 +306,7 @@ void	path_finder(t_ppxb *pipex, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	t_ppxb	pipex;
-	int		stat;
 
-	errno = 0;
 	if (argc < args_in(argv[1], &pipex))
 		return (err_msg("Invalid number of arguments.\n"));
 	cmd_counter(argc, &pipex);
@@ -326,7 +324,7 @@ int	main(int argc, char **argv, char **envp)
 	close_pipes(&pipex);
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)
-		waitpid(pipex.pid[pipex.idx], &stat, 0);
+		waitpid(pipex.pid[pipex.idx], &pipex.status, 0);
 	parent_free(&pipex);
-	return (stat);
+	return (pipex.status);
 }

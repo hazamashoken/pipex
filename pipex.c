@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 18:47:12 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 19:30:11 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,9 +198,7 @@ void	close_pipes(t_pipex *pipex)
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
-	int		status;
 
-	errno = 0;
 	if (argc != 5)
 		return (err_msg("Invalid number of arguments.\n"));
 	if (pipe(pipex.tube) < 0)
@@ -218,9 +216,10 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.pid_out == 0)
 		second_child(pipex, argv, envp);
 	close_pipes(&pipex);
-	waitpid(pipex.pid_in, &status, 0);
-	waitpid(pipex.pid_out, &status, 0);
+	waitpid(pipex.pid_in, &pipex.status, 0);
+	waitpid(pipex.pid_out, &pipex.status, 0);
 	free_parent(&pipex);
-	//exit(WEXITSTATUS(status));
+	if (WEXITSTATUS(pipex.status) != 0)
+		exit(WEXITSTATUS(pipex.status));
 	exit(0);
 }
