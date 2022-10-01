@@ -6,7 +6,7 @@
 #    By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/14 00:32:16 by tliangso          #+#    #+#              #
-#    Updated: 2022/10/01 21:34:52 by tliangso         ###   ########.fr        #
+#    Updated: 2022/10/01 21:38:31 by tliangso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,6 +93,7 @@ g: ${BONUS_OBJS}
 	@${CC} -g ${CFLAGS} -o ${NAME} ${BONUS_OBJS}
 
 tester:
+	@echo "$(YELLOW)Testers are not perfect$(NOC)"
 	git clone ${TESTER1} TESTER1
 	git clone ${TESTER2} TESTER2
 	git clone ${TESTER3} TESTER3
