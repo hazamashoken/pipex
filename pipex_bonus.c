@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 19:30:16 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 20:34:13 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	get_infile(char **argv, t_ppxb *pipex)
 	{
 		pipex->infile = open(argv[1], O_RDONLY);
 		if (pipex->infile < 0)
-			perr_msg(argv[1], 1);
+			perr_msg(argv[1], EXIT_SUCCESS);
 	}
 }
 
@@ -88,7 +88,7 @@ void	get_outfile(char **argv, t_ppxb *p, int argc)
 	else
 		p->outfile = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0000644);
 	if (p->outfile < 0)
-		perr_msg(argv[argc - 1], 1);
+		perr_msg(argv[argc - 1], EXIT_FAILURE);
 }
 
 char	*find_path(char **envp)
@@ -142,7 +142,7 @@ void	pipe_free(t_ppxb *pipex)
 		unlink(".heredoc_tmp");
 	free(pipex->pipe);
 	err_msg("Environment");
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 void	creat_pipes(t_ppxb *pipex)
@@ -280,9 +280,9 @@ void	child(t_ppxb p, char **argv, char **envp, int argc)
 		child_free(&p);
 		exit(127);
 	}
-	if (execve(p.cmd, p.cmd_args, envp))
-		perr_msg("execve", 1);
+	execve(p.cmd, p.cmd_args, envp);
 	child_free(&p);
+	perr_msg("execve", EXIT_FAILURE);
 }
 
 void	cmd_counter(int argc, t_ppxb *pipex)
@@ -292,7 +292,7 @@ void	cmd_counter(int argc, t_ppxb *pipex)
 	pipex->pipe_nmbs = 2 * (pipex->cmd_nmbs - 1);
 	pipex->pipe = (int *)malloc(sizeof(int) * pipex->pipe_nmbs);
 	if (!pipex->pipe)
-		perr_msg("Pipe", 1);
+		perr_msg("pipe", EXIT_FAILURE);
 }
 
 void	path_finder(t_ppxb *pipex, char **envp)
@@ -317,7 +317,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		pipex.pid[pipex.idx] = fork();
 		if (pipex.pid[pipex.idx] < 0)
-			perr_msg("fork", 1);
+			perr_msg("fork", EXIT_FAILURE);
 		else if (pipex.pid[pipex.idx] == 0)
 			child(pipex, argv, envp, argc);
 	}
@@ -326,5 +326,5 @@ int	main(int argc, char **argv, char **envp)
 	while (++(pipex.idx) < pipex.cmd_nmbs)
 		waitpid(pipex.pid[pipex.idx], &pipex.status, 0);
 	parent_free(&pipex);
-	return (pipex.status);
+	exit(EXIT_SUCCESS);
 }

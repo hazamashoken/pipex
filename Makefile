@@ -6,7 +6,7 @@
 #    By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/14 00:32:16 by tliangso          #+#    #+#              #
-#    Updated: 2022/10/01 16:14:51 by tliangso         ###   ########.fr        #
+#    Updated: 2022/10/01 20:39:25 by tliangso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,12 @@ HEAD	= .
 
 ### TESTER GIT URL ###
 TESTER = "git@github.com:vfurmane/pipex-tester.git"
+TESTER2 = "git@github.com:hazamashoken/PIPEX_TESTER.git"
 
 ### SOURCE FILE ###
-SRC		=	pipex.c utils.c utils2.c ft_split.c
+#SRC		=	pipex.c utils.c utils2.c ft_split.c
+SRC		=	pipex_bonus.c get_next_line.c get_next_line_utils.c utils_bonus.c \
+			utils2_bonus.c ft_split_bonus.c
 BONUS	=	pipex_bonus.c get_next_line.c get_next_line_utils.c utils_bonus.c \
 			utils2_bonus.c ft_split_bonus.c
 EXTRA	=
@@ -87,7 +90,7 @@ g: ${BONUS_OBJS}
 
 tester:
 	git clone ${TESTER} TESTER
-	bash TESTER/run.sh
+	git clone ${TESTER2} TESTER2
 
 norm:
 	norminette

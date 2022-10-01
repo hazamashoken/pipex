@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 19:30:11 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 20:34:31 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,12 +156,10 @@ void	first_child(t_pipex pipex, char **argv, char **envp)
 		err_msg("Command not found\n");
 		exit(127);
 	}
-	if (execve(pipex.cmd, pipex.cmd_args, envp))
-	{
-		free_child(&pipex);
-		perr_msg("execve", 1);
-	}
+	execve(pipex.cmd, pipex.cmd_args, envp);
 	free_child(&pipex);
+	perr_msg("execve", 1);
+
 }
 
 void	second_child(t_pipex pipex, char **argv, char **envp)
@@ -181,12 +179,9 @@ void	second_child(t_pipex pipex, char **argv, char **envp)
 		err_msg("Command not found\n");
 		exit(127);
 	}
-	if (execve(pipex.cmd, pipex.cmd_args, envp))
-	{
-		free_child(&pipex);
-		perr_msg("execve", 1);
-	}
+	execve(pipex.cmd, pipex.cmd_args, envp);
 	free_child(&pipex);
+	perr_msg("execve", 1);
 }
 
 void	close_pipes(t_pipex *pipex)
@@ -202,17 +197,17 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 5)
 		return (err_msg("Invalid number of arguments.\n"));
 	if (pipe(pipex.tube) < 0)
-		return (perr_msg("Pipe", 1));
+		return (perr_msg("pipe", EXIT_FAILURE));
 	pipex.paths = find_path(envp);
 	pipex.cmd_paths = ft_split(pipex.paths, ':');
 	pipex.pid_in = fork();
 	if (pipex.pid_in < 0)
-		perr_msg("fork", 1);
+		perr_msg("fork", EXIT_FAILURE);
 	if (pipex.pid_in == 0)
 		first_child(pipex, argv, envp);
 	pipex.pid_out = fork();
 	if (pipex.pid_out < 0)
-		perr_msg("fork", 1);
+		perr_msg("fork", EXIT_FAILURE);
 	if (pipex.pid_out == 0)
 		second_child(pipex, argv, envp);
 	close_pipes(&pipex);
@@ -221,5 +216,5 @@ int	main(int argc, char **argv, char **envp)
 	free_parent(&pipex);
 	if (WEXITSTATUS(pipex.status) != 0)
 		exit(WEXITSTATUS(pipex.status));
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
