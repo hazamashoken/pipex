@@ -6,29 +6,33 @@
 #    By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/14 00:32:16 by tliangso          #+#    #+#              #
-#    Updated: 2022/10/01 20:39:25 by tliangso         ###   ########.fr        #
+#    Updated: 2022/10/01 21:34:52 by tliangso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 ### DIR ###
-DIRSRC	=	./
-HEAD	= .
+DIRSRC	=	src/
+BONUS_SRC =	bonus/
+HEAD	= include/
 
 ### TESTER GIT URL ###
-TESTER = "git@github.com:vfurmane/pipex-tester.git"
+TESTER1 = "git@github.com:vfurmane/pipex-tester.git"
 TESTER2 = "git@github.com:hazamashoken/PIPEX_TESTER.git"
+TESTER3 = "git@github.com:Yoo0lh/pipex_tester_42.git"
 
 ### SOURCE FILE ###
-#SRC		=	pipex.c utils.c utils2.c ft_split.c
-SRC		=	pipex_bonus.c get_next_line.c get_next_line_utils.c utils_bonus.c \
-			utils2_bonus.c ft_split_bonus.c
+SRC		=	pipex.c utils.c utils2.c ft_split.c free.c path_finder.c sanitiser.c
+
 BONUS	=	pipex_bonus.c get_next_line.c get_next_line_utils.c utils_bonus.c \
-			utils2_bonus.c ft_split_bonus.c
+			utils2_bonus.c ft_split_bonus.c here_doc_bonus.c msg_handler_bonus.c \
+			pipe_tools_bonus.c free_bonus.c sanitiser_bonus.c path_finder_bonus.c \
+
+
 EXTRA	=
 
 ### PATH ###
 SRCS	= ${addprefix ${DIRSRC}, ${SRC}}
-BONUS_SRCS = ${addprefix ${DIRSRC}, ${BONUS}}
+BONUS_SRCS = ${addprefix ${BONUS_SRC}, ${BONUS}}
 EXTRA_SRCS = ${addprefix ${DIRSRC}, ${EXTRA}}
 
 ### OBJECT FILE ###
@@ -89,8 +93,9 @@ g: ${BONUS_OBJS}
 	@${CC} -g ${CFLAGS} -o ${NAME} ${BONUS_OBJS}
 
 tester:
-	git clone ${TESTER} TESTER
+	git clone ${TESTER1} TESTER1
 	git clone ${TESTER2} TESTER2
+	git clone ${TESTER3} TESTER3
 
 norm:
 	norminette

@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 20:34:31 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 20:58:54 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,118 +25,6 @@ int	perr_msg(char *str, int status)
 	else
 		perror(str);
 	exit(status);
-}
-
-char	*find_path(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (ft_strncmp("PATH", *envp + i, 4))
-		i++;
-	return (*envp + i + 5);
-}
-
-char	*get_cmd(char **paths, char *cmd)
-{
-	char	*tmp;
-	char	*command;
-
-	if (access(cmd, 0) == 0)
-		return (cmd);
-	while (*paths)
-	{
-		tmp = ft_strjoin(*paths, "/");
-		command = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(command, 0) == 0)
-			return (command);
-		free(command);
-		paths++;
-	}
-	return (NULL);
-}
-
-char	**make_new_args(char **args, int index)
-{
-	t_runner	runner;
-	char		**new_args;
-	char		*str;
-
-	runner.i = 0;
-	runner.j = 0;
-	runner.len = ft_strpplen(args);
-	new_args = (char **)malloc(sizeof(char *) * runner.len);
-	if (new_args == NULL)
-		return (NULL);
-	while (args[runner.j] != 0)
-	{
-		if (runner.i == index)
-		{
-			str = ft_strdup("\' \'");
-			runner.j += 2;
-		}
-		else
-			str = ft_strdup(args[runner.j++]);
-		new_args[runner.i] = str;
-		runner.i++;
-	}
-	ft_free_split(args);
-	return (new_args);
-}
-
-char	**ft_cmd_sanitiser(char **cmd_args)
-{
-	char	**tmp;
-	char	last;
-	int		index;
-	int		i;
-
-	tmp = cmd_args;
-	last = '\0';
-	index = 0;
-	i = 0;
-	while (tmp[i] != 0)
-	{
-		if (ft_strlen(tmp[i]) == 1 && *tmp[i] == '\'')
-		{
-			if (last == *tmp[i])
-				return (ft_cmd_sanitiser(make_new_args(cmd_args, index)));
-			index++;
-			last = *tmp[i];
-		}
-		i++;
-	}
-	return (cmd_args);
-}
-
-void	free_parent(t_pipex *pipex)
-{
-	int	i;
-
-	i = 0;
-	close(pipex->infile);
-	close(pipex->outfile);
-	while (pipex->cmd_paths[i])
-	{
-		free(pipex->cmd_paths[i]);
-		i++;
-	}
-	free(pipex->cmd_paths);
-}
-
-void	free_child(t_pipex *pipex)
-{
-	int	i;
-
-	i = 0;
-	while (pipex->cmd_args[i])
-	{
-		free(pipex->cmd_args[i]);
-		i++;
-	}
-	free(pipex->cmd_args);
-	free(pipex->cmd);
 }
 
 void	first_child(t_pipex pipex, char **argv, char **envp)
@@ -159,7 +47,6 @@ void	first_child(t_pipex pipex, char **argv, char **envp)
 	execve(pipex.cmd, pipex.cmd_args, envp);
 	free_child(&pipex);
 	perr_msg("execve", 1);
-
 }
 
 void	second_child(t_pipex pipex, char **argv, char **envp)
@@ -182,12 +69,6 @@ void	second_child(t_pipex pipex, char **argv, char **envp)
 	execve(pipex.cmd, pipex.cmd_args, envp);
 	free_child(&pipex);
 	perr_msg("execve", 1);
-}
-
-void	close_pipes(t_pipex *pipex)
-{
-	close(pipex->tube[0]);
-	close(pipex->tube[1]);
 }
 
 int	main(int argc, char **argv, char **envp)
