@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:10:01 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 13:18:33 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ void	parent_free(t_ppxb *pipex)
 	}
 	free(pipex->cmd_paths);
 	free(pipex->pipe);
+	free(pipex->pid);
 }
 
 void	child_free(t_ppxb *pipex)
@@ -263,40 +264,30 @@ char	**ft_cmd_sanitiser(char **cmd_args)
 
 void	child(t_ppxb p, char **argv, char **envp, int argc)
 {
-	pid_t	pid;
-	//int		stat;
-
-	pid = fork();
-	if (pid < 0)
-		perr_msg("fork");
-	else if (pid == 0)
+	if (p.idx == 0)
 	{
-		if (p.idx == 0)
-		{
-			get_infile(argv, &p);
-			sub_dup2(p.infile, p.pipe[1]);
-		}
-		else if (p.idx == p.cmd_nmbs - 1)
-		{
-			get_outfile(argv, &p, argc);
-			sub_dup2(p.pipe[2 * p.idx - 2], p.outfile);
-		}
-		else
-			sub_dup2(p.pipe[2 * p.idx - 2], p.pipe[2 * p.idx + 1]);
-		close_pipes(&p);
-		p.cmd_args = ft_split(argv[2 + p.here_doc + p.idx], ' ');
-		p.cmd_args = ft_cmd_sanitiser(p.cmd_args);
-		p.cmd = get_cmd(p.cmd_paths, p.cmd_args[0]);
-		if (!p.cmd)
-		{
-			msg_pipe(p.cmd_args[0]);
-			child_free(&p);
-			exit(EXIT_FAILURE);
-		}
-		execve(p.cmd, p.cmd_args, envp);
-		child_free(&p);
-		//waitpid(pid, &stat, 0);
+		get_infile(argv, &p);
+		sub_dup2(p.infile, p.pipe[1]);
 	}
+	else if (p.idx == p.cmd_nmbs - 1)
+	{
+		get_outfile(argv, &p, argc);
+		sub_dup2(p.pipe[2 * p.idx - 2], p.outfile);
+	}
+	else
+		sub_dup2(p.pipe[2 * p.idx - 2], p.pipe[2 * p.idx + 1]);
+	close_pipes(&p);
+	p.cmd_args = ft_split(argv[2 + p.here_doc + p.idx], ' ');
+	p.cmd_args = ft_cmd_sanitiser(p.cmd_args);
+	p.cmd = get_cmd(p.cmd_paths, p.cmd_args[0]);
+	if (!p.cmd)
+	{
+		msg_pipe(p.cmd_args[0]);
+		child_free(&p);
+		exit(EXIT_FAILURE);
+	}
+	execve(p.cmd, p.cmd_args, envp);
+	child_free(&p);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -307,6 +298,7 @@ int	main(int argc, char **argv, char **envp)
 	if (argc < args_in(argv[1], &pipex))
 		return (err_msg("Invalid number of arguments.\n"));
 	pipex.cmd_nmbs = argc - 3 - pipex.here_doc;
+	pipex.pid = (int *)malloc(sizeof(int) * pipex.cmd_nmbs);
 	pipex.pipe_nmbs = 2 * (pipex.cmd_nmbs - 1);
 	pipex.pipe = (int *)malloc(sizeof(int) * pipex.pipe_nmbs);
 	if (!pipex.pipe)
@@ -318,16 +310,25 @@ int	main(int argc, char **argv, char **envp)
 	creat_pipes(&pipex);
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)
-		child(pipex, argv, envp, argc);
+	{
+		pipex.pid[pipex.idx] = fork();
+		if (pipex.pid[pipex.idx] < 0)
+			perr_msg("fork");
+		else if (pipex.pid[pipex.idx] == 0)
+			child(pipex, argv, envp, argc);
+	}
 	close_pipes(&pipex);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
-	wait(NULL);
+	pipex.idx = -1;
+	while (++(pipex.idx) < pipex.cmd_nmbs)
+		waitpid(pipex.pid[pipex.idx], NULL, 0);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
+	// wait(NULL);
 	parent_free(&pipex);
 	return (0);
 }
