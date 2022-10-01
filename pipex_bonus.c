@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 13:09:07 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 13:10:01 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,7 +264,7 @@ char	**ft_cmd_sanitiser(char **cmd_args)
 void	child(t_ppxb p, char **argv, char **envp, int argc)
 {
 	pid_t	pid;
-	int		stat;
+	//int		stat;
 
 	pid = fork();
 	if (pid < 0)
