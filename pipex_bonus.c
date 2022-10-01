@@ -6,12 +6,13 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 13:49:28 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 15:41:53 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 17:45:11 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"pipex_bonus.h"
 #include "pipex.h"
+#include <bits/types/stack_t.h>
 
 int	err_msg(char *str)
 {
@@ -19,13 +20,13 @@ int	err_msg(char *str)
 	exit (EXIT_FAILURE);
 }
 
-int	perr_msg(char *str)
+int	perr_msg(char *str, int status)
 {
 	if (errno == 0)
 		write(2, "Error\n", 6);
 	else
 		perror(str);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 int	args_in(char *arg, t_ppxb *pipex)
@@ -49,7 +50,7 @@ void	here_doc(char *argv, t_ppxb *pipex)
 
 	file = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0000644);
 	if (file < 0)
-		perr_msg("heredoc");
+		perr_msg("heredoc", 1);
 	while (1)
 	{
 		write(1, "heredoc> ", 9);
@@ -66,7 +67,7 @@ void	here_doc(char *argv, t_ppxb *pipex)
 	if (pipex->infile < 0)
 	{
 		unlink(".heredoc_tmp");
-		perr_msg("heredoc");
+		perr_msg("heredoc", 1);
 	}
 }
 
@@ -78,7 +79,7 @@ void	get_infile(char **argv, t_ppxb *pipex)
 	{
 		pipex->infile = open(argv[1], O_RDONLY);
 		if (pipex->infile < 0)
-			perr_msg(argv[1]);
+			perr_msg(argv[1], 1);
 	}
 }
 
@@ -89,7 +90,7 @@ void	get_outfile(char **argv, t_ppxb *p, int argc)
 	else
 		p->outfile = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0000644);
 	if (p->outfile < 0)
-		perr_msg(argv[argc - 1]);
+		perr_msg(argv[argc - 1], 1);
 }
 
 char	*find_path(char **envp)
@@ -279,9 +280,10 @@ void	child(t_ppxb p, char **argv, char **envp, int argc)
 	{
 		msg_pipe(p.cmd_args[0]);
 		child_free(&p);
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
-	execve(p.cmd, p.cmd_args, envp);
+	if (execve(p.cmd, p.cmd_args, envp))
+		perr_msg("execve", 1);
 	child_free(&p);
 }
 
@@ -292,7 +294,7 @@ void	cmd_counter(int argc, t_ppxb *pipex)
 	pipex->pipe_nmbs = 2 * (pipex->cmd_nmbs - 1);
 	pipex->pipe = (int *)malloc(sizeof(int) * pipex->pipe_nmbs);
 	if (!pipex->pipe)
-		perr_msg("Pipe");
+		perr_msg("Pipe", 1);
 }
 
 void	path_finder(t_ppxb *pipex, char **envp)
@@ -306,6 +308,7 @@ void	path_finder(t_ppxb *pipex, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	t_ppxb	pipex;
+	int		stat;
 
 	errno = 0;
 	if (argc < args_in(argv[1], &pipex))
@@ -318,14 +321,14 @@ int	main(int argc, char **argv, char **envp)
 	{
 		pipex.pid[pipex.idx] = fork();
 		if (pipex.pid[pipex.idx] < 0)
-			perr_msg("fork");
+			perr_msg("fork", 1);
 		else if (pipex.pid[pipex.idx] == 0)
 			child(pipex, argv, envp, argc);
 	}
 	close_pipes(&pipex);
 	pipex.idx = -1;
 	while (++(pipex.idx) < pipex.cmd_nmbs)
-		waitpid(pipex.pid[pipex.idx], NULL, 0);
+		waitpid(pipex.pid[pipex.idx], &stat, 0);
 	parent_free(&pipex);
-	return (0);
+	return (stat);
 }

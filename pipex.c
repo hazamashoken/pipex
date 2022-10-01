@@ -6,11 +6,13 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 16:27:45 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 18:26:40 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"pipex.h"
+#include <bits/types/stack_t.h>
+#include <sys/wait.h>
 
 int	err_msg(char *str)
 {
@@ -18,13 +20,13 @@ int	err_msg(char *str)
 	exit(EXIT_FAILURE);
 }
 
-int	perr_msg(char *str)
+int	perr_msg(char *str, int status)
 {
 	if (errno == 0)
 		write(2, "Error\n", 6);
 	else
 		perror(str);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 char	*find_path(char **envp)
@@ -143,19 +145,24 @@ void	first_child(t_pipex pipex, char **argv, char **envp)
 {
 	pipex.infile = open(argv[1], O_RDONLY);
 	if (pipex.infile < 0)
-		perr_msg(argv[1]);
+		perr_msg(argv[1], 0);
 	close(pipex.tube[0]);
 	dup2(pipex.tube[1], STDOUT_FILENO);
 	dup2(pipex.infile, STDIN_FILENO);
 	pipex.cmd_args = ft_split(argv[2], ' ');
+	pipex.cmd_args = ft_cmd_sanitiser(pipex.cmd_args);
 	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
 	if (!pipex.cmd)
 	{
 		free_child(&pipex);
 		err_msg("Command not found\n");
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
-	execve(pipex.cmd, pipex.cmd_args, envp);
+	if (execve(pipex.cmd, pipex.cmd_args, envp))
+	{
+		free_child(&pipex);
+		perr_msg("execve", 1);
+	}
 	free_child(&pipex);
 }
 
@@ -163,7 +170,7 @@ void	second_child(t_pipex pipex, char **argv, char **envp)
 {
 	pipex.outfile = open(argv[4], O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	if (pipex.outfile < 0)
-		perr_msg(argv[4]);
+		perr_msg(argv[4], 1);
 	close(pipex.tube[1]);
 	dup2(pipex.tube[0], STDIN_FILENO);
 	dup2(pipex.outfile, STDOUT_FILENO);
@@ -174,9 +181,13 @@ void	second_child(t_pipex pipex, char **argv, char **envp)
 	{
 		free_child(&pipex);
 		err_msg("Command not found\n");
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
-	execve(pipex.cmd, pipex.cmd_args, envp);
+	if (execve(pipex.cmd, pipex.cmd_args, envp))
+	{
+		free_child(&pipex);
+		perr_msg("execve", 1);
+	}
 	free_child(&pipex);
 }
 
@@ -189,28 +200,28 @@ void	close_pipes(t_pipex *pipex)
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
-	int		stat;
+	int		status;
 
 	errno = 0;
 	if (argc != 5)
 		return (err_msg("Invalid number of arguments.\n"));
 	if (pipe(pipex.tube) < 0)
-		return (perr_msg("Pipe"));
+		return (perr_msg("Pipe", 1));
 	pipex.paths = find_path(envp);
 	pipex.cmd_paths = ft_split(pipex.paths, ':');
 	pipex.pid_in = fork();
 	if (pipex.pid_in < 0)
-		perr_msg("fork");
+		perr_msg("fork", 1);
 	if (pipex.pid_in == 0)
 		first_child(pipex, argv, envp);
 	pipex.pid_out = fork();
 	if (pipex.pid_out < 0)
-		perr_msg("fork");
+		perr_msg("fork", 1);
 	if (pipex.pid_out == 0)
 		second_child(pipex, argv, envp);
 	close_pipes(&pipex);
-	waitpid(pipex.pid_in, &stat, 0);
-	waitpid(pipex.pid_out, &stat, 0);
+	waitpid(pipex.pid_in, &status, 0);
+	waitpid(pipex.pid_out, &status, 0);
 	free_parent(&pipex);
-	exit (stat);
+	exit(WEXITSTATUS(status));
 }
