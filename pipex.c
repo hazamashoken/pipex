@@ -6,7 +6,7 @@
 /*   By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 03:11:10 by tliangso          #+#    #+#             */
-/*   Updated: 2022/10/01 18:29:11 by tliangso         ###   ########.fr       */
+/*   Updated: 2022/10/01 18:47:12 by tliangso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,5 +221,6 @@ int	main(int argc, char **argv, char **envp)
 	waitpid(pipex.pid_in, &status, 0);
 	waitpid(pipex.pid_out, &status, 0);
 	free_parent(&pipex);
-	exit(WEXITSTATUS(status));
+	//exit(WEXITSTATUS(status));
+	exit(0);
 }
