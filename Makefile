@@ -6,7 +6,7 @@
 #    By: tliangso <earth78203@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/14 00:32:16 by tliangso          #+#    #+#              #
-#    Updated: 2022/10/01 21:38:31 by tliangso         ###   ########.fr        #
+#    Updated: 2022/10/05 16:20:05 by tliangso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -106,5 +106,19 @@ gitpush:
 	git status
 	git commit -m ${NAME}
 	git push
+
+help:
+	@clear
+	@echo "$(GREEN)Avaibles options:$(NOC)"
+	@echo "$(RED)==================$(NOC)"
+	@echo "$(RED)| $(YELLOW)make ${NAME}	 $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make bonus     $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make norm      $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make tester    $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make clean     $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make fclean    $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make re        $(RED)|$(NOC)"
+	@echo "$(RED)| $(YELLOW)make help      $(RED)|$(NOC)"
+	@echo "$(RED)==================$(NOC)"
 
 .PHONY:		all	clean	fclean	re bonus b m g norm gitpush
